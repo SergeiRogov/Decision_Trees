@@ -1,5 +1,6 @@
 import pandas as pd
 from sklearn.datasets import load_wine
+from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
@@ -11,7 +12,7 @@ from sklearn.tree import plot_tree
 import matplotlib.pyplot as plt
 
 # loading wine dataset
-data = load_wine()
+data = load_breast_cancer()
 dataset = pd.DataFrame(data=data['data'], columns=data['feature_names'])
 # print(dataset)
 
@@ -20,13 +21,13 @@ X = dataset.copy()
 Y = data['target']
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3)
 
-pruning_parameters = []
+depth_parameters = []
 accuracy_array = []
 for i in range(20):
     # creating decision tree model
-    prun_param = 0.005 * i
-    print(f'Number {i}, prun_param = {prun_param}')
-    classifier = DecisionTreeClassifier(ccp_alpha=prun_param)
+    depth_param = i+1
+    print(f'Number {i}, prun_param = {depth_param}')
+    classifier = DecisionTreeClassifier(max_depth=depth_param)
     classifier = classifier.fit(X_train, Y_train)
 
     # testing a model with a test set
@@ -64,12 +65,12 @@ for i in range(20):
     #           filled=True,  # Adds color according to class
     #           proportion=True)  # Displays the proportions of class samples instead of the whole number of samples
     # plt.show()
-    pruning_parameters.append(prun_param)
+    depth_parameters.append(depth_param)
     accuracy_array.append(accuracy)
 
-data_param = {'Pruning parameter': pruning_parameters,
+data_param = {'Depth parameter': depth_parameters,
               'Accuracy': accuracy_array}
 table = pd.DataFrame(data_param)
 print(table)
-table.plot(x='Pruning parameter', y='Accuracy', kind='line', style='.-')
+table.plot(x='Depth parameter', y='Accuracy', kind='line', style='.-')
 plt.show()
